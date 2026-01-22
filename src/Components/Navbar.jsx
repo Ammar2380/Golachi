@@ -22,6 +22,7 @@ const Navbar = () => {
     { name: 'Contact', id: 'contact' },
   ];
 
+  // Prevent scrolling when either menu or cart is open
   useEffect(() => {
     if (isOpen || isCartOpen) {
       document.body.style.overflow = 'hidden';
@@ -67,16 +68,32 @@ const Navbar = () => {
     <>
       <nav className="fixed top-0 w-full z-50 text-white bg-black/10 backdrop-blur-md border-b border-white/5">
         <div className="max-w-[1440px] mx-auto px-6 md:px-12 py-5 flex justify-between items-center relative">
-          <button className="lg:hidden flex flex-col items-center justify-center w-8 h-8 z-50" onClick={() => setIsOpen(true)}>
-            <span className="w-6 h-[1px] bg-white mb-1.5" />
-            <span className="w-6 h-[1px] bg-white mb-1.5" />
-            <span className="w-6 h-[1px] bg-white" />
+          
+          {/* Hamburger Button */}
+          <button 
+            className="lg:hidden flex flex-col items-center justify-center w-8 h-8 z-[200]" 
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            <motion.span 
+              animate={isOpen ? { rotate: 45, y: 7 } : { rotate: 0, y: 0 }}
+              className="w-6 h-[1px] bg-white mb-1.5" 
+            />
+            <motion.span 
+              animate={isOpen ? { opacity: 0 } : { opacity: 1 }}
+              className="w-6 h-[1px] bg-white mb-1.5" 
+            />
+            <motion.span 
+              animate={isOpen ? { rotate: -45, y: -7 } : { rotate: 0, y: 0 }}
+              className="w-6 h-[1px] bg-white" 
+            />
           </button>
 
+          {/* Logo */}
           <div className="absolute left-1/2 -translate-x-1/2 lg:static lg:translate-x-0 cursor-pointer" onClick={() => scrollToSection('home')}>
             <img src={logo} alt="Logo" className="h-4 md:h-5 brightness-0 invert tracking-[0.5em]" />
           </div>
 
+          {/* Desktop Links */}
           <ul className="hidden lg:flex gap-12 items-center">
             {navLinks.map((link) => (
               <li key={link.name} onClick={() => scrollToSection(link.id)} className="cursor-pointer uppercase text-[10px] tracking-[0.4em] font-light hover:text-zinc-400 transition-all">
@@ -85,6 +102,7 @@ const Navbar = () => {
             ))}
           </ul>
 
+          {/* Cart Trigger */}
           <button onClick={() => setIsCartOpen(true)} className="text-lg opacity-80 hover:opacity-100 transition-opacity z-50 relative">
             👜 {totalItems > 0 && <span className="absolute -top-2 -right-2 bg-white text-black text-[8px] w-4 h-4 rounded-full flex items-center justify-center font-bold">({totalItems})</span>}
           </button>
@@ -92,6 +110,41 @@ const Navbar = () => {
       </nav>
 
       <AnimatePresence>
+        {/* MOBILE MENU OVERLAY */}
+        {isOpen && (
+          <>
+            <motion.div 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              exit={{ opacity: 0 }} 
+              onClick={() => setIsOpen(false)} 
+              className="fixed inset-0 bg-black/90 z-[150] backdrop-blur-xl" 
+            />
+            <motion.div 
+              initial={{ x: '-100%' }} 
+              animate={{ x: 0 }} 
+              exit={{ x: '-100%' }} 
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }} 
+              className="fixed left-0 top-0 h-full w-[80%] max-w-sm bg-black z-[160] p-10 flex flex-col justify-center"
+            >
+              <ul className="flex flex-col gap-8">
+                {navLinks.map((link) => (
+                  <motion.li 
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    key={link.name} 
+                    onClick={() => scrollToSection(link.id)} 
+                    className="text-white uppercase text-sm tracking-[0.5em] font-light cursor-pointer hover:text-zinc-400 transition-colors"
+                  >
+                    {link.name}
+                  </motion.li>
+                ))}
+              </ul>
+            </motion.div>
+          </>
+        )}
+
+        {/* CART OVERLAY */}
         {isCartOpen && (
           <>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsCartOpen(false)} className="fixed inset-0 bg-black/80 z-[150] backdrop-blur-md" />
@@ -129,7 +182,6 @@ const Navbar = () => {
                   )
                 ) : (
                   <div className="space-y-8">
-                    {/* Order Summary Block */}
                     <div className="bg-zinc-50 p-5 rounded-sm">
                       <h4 className="text-[10px] tracking-[0.2em] uppercase font-bold mb-4 text-zinc-800">Order Review</h4>
                       <div className="space-y-3">
@@ -142,7 +194,6 @@ const Navbar = () => {
                       </div>
                     </div>
 
-                    {/* Form Fields */}
                     <form id="checkout-form" onSubmit={sendWhatsAppOrder} className="space-y-6">
                       <div className="border-l-2 border-black pl-4 mb-4">
                         <h3 className="text-xs uppercase tracking-[0.3em] font-medium">Shipping Details</h3>
