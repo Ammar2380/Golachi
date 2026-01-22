@@ -7,11 +7,13 @@ import Collections from "./Components/Collections"
 import News from "./Components/News"
 import StoreInfo from "./Components/StoreInfo"
 import Footer from "./Components/Footer"
+import { CartProvider } from "./Components/CartContext" // 1. Import the Provider
 import './App.css'
 
 const App = () => {
   return (
-    <>
+    // 2. Wrap everything in the CartProvider
+    <CartProvider>
       <Navbar />
       <Hero />
       <About/>
@@ -21,7 +23,7 @@ const App = () => {
       <News />
       <StoreInfo />
       <Footer />
-    </>
+    </CartProvider>
   )
 }
 
