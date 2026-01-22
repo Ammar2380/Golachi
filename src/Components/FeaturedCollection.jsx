@@ -50,22 +50,24 @@ const FeaturedCollection = () => {
             className="flex flex-col items-center group cursor-pointer"
           >
             <div className="relative w-full aspect-[4/5] overflow-hidden bg-[#f9f9f9] mb-6">
-              {product.soldOut ? (
-                <div className="absolute top-0 right-0 z-10 bg-white px-4 py-1.5 text-[10px] tracking-widest uppercase text-zinc-400">
-                  Sold Out
-                </div>
-              ) : (
-                /* Add to Cart Overlay Button */
-                <button 
-                  onClick={(e) => {
-                    e.stopPropagation(); // Prevents triggering any parent click events
-                    addToCart(product);
-                  }}
-                  className="absolute bottom-0 w-full bg-black text-white py-4 text-[10px] tracking-[0.3em] uppercase z-20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out"
-                >
-                  Add to Bag +
-                </button>
-              )}
+              {/* Add to Cart Button - Refined for Mobile & Desktop */}
+{!product.soldOut && (
+  <button 
+    onClick={(e) => {
+      e.stopPropagation();
+      addToCart(product);
+    }}
+    className="
+      absolute bottom-0 w-full bg-black text-white py-4 text-[10px] tracking-[0.3em] uppercase z-20 
+      /* Mobile: Always visible, slightly smaller */
+      translate-y-0 opacity-100 
+      /* Desktop: Hide and slide up on hover */
+      lg:translate-y-full lg:group-hover:translate-y-0 lg:transition-transform lg:duration-300 lg:ease-out
+    "
+  >
+    Add to Bag +
+  </button>
+)}
               
               <img
                 src={product.img}
